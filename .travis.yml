@@ -4,4 +4,4 @@ branches:
 python:
   - 3.2
 script:
-  - python --version; python ./bin/jasy create --name mytest --origin https://github.com/zynga/core.git --skeleton application
+  - alias python3='python'; bin/jasy create --name mytest --origin https://github.com/zynga/core.git --skeleton application
