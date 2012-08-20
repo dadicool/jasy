@@ -5,4 +5,4 @@ branches:
 python:
   - 3.2
 script:
-  - python bin/jasy create --name mytest --origin https://github.com/zynga/core.git --skeleton application
+  - python ./bin/jasy create --name mytest --origin https://github.com/zynga/core.git --skeleton application
