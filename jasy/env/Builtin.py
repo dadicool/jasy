@@ -12,24 +12,16 @@ from jasy.core.Error import JasyError
 from jasy.core.Repository import isRepository, updateRepository
 from jasy.core.Project import getProjectFromPath
 from jasy.core.Util import getKey, getFirstSubFolder, massFilePatcher
-
+from jasy.env.Config import Config
 
 validProjectName = re.compile(r"^[a-z][a-z0-9]*$")
-
-def printBasicInfo():
-    print("Jasy is powerful web tooling framework inspired by SCons")
-    print("Copyright (c) 2010-2012 Zynga Inc. %s" % colorize("http://zynga.com/", "underline"))
-    print("Visit %s for details." % colorize("https://github.com/zynga/jasy", "underline"))
-    print()
-
 
 @task
 def about():
     """Print outs the Jasy about page"""
 
     header("About")
-
-    printBasicInfo()
+    jasy.info()
 
     info("Command: %s", jasy.env.Task.getCommand())
     info("Version: %s", jasy.__version__)
@@ -40,8 +32,7 @@ def help():
     """Shows this help screen"""
 
     header("Showing Help")
-
-    printBasicInfo()
+    jasy.info()
     
     print(colorize(colorize("Usage", "underline"), "bold"))
     import jasy.env.Task
@@ -66,7 +57,7 @@ def doctor():
 
 
 @task
-def create(name="myproject", origin=None, skeleton=None, **argv):
+def create(name="myproject", origin=None, skeleton=None, configFormat="yaml", **argv):
     """Creates a new project"""
 
     header("Creating project %s" % name)
@@ -163,19 +154,28 @@ def create(name="myproject", origin=None, skeleton=None, **argv):
     debug("Files were copied successfully.")
 
     # Build data for template substitution
-    data = argv
+    data = {}
+    data.update(argv)
     data["name"] = name
     data["origin"] = originName
     data["skeleton"] = os.path.basename(skeletonPath)
-    data["jasy"] = "Jasy %s" % jasy.__version__
+    data["jasy"] = jasy.__version__
 
     # Do actual replacement of placeholders
     massFilePatcher(destinationPath, data)
     debug("Files were patched successfully.")
 
-    # Execute help once to load/prepare all depend projects
-    info("Pre-Initializing project...")
-    runTask(destinationPath, "help")
-    info('Your application %s was created and pre-initialized successfully!', colorize(name, "bold"))
+    # Change to directory before continuing
+    os.chdir(destinationPath)
 
+    # Create configuration file from question configs and custom scripts
+    info("Starting configuration...")
+    config = Config("jasyscript.%s" % configFormat)
+    config.inject(**argv)
+    config.read("jasycreate")
+    config.execute("jasycreate.py")
+    config.write()
+
+    # Done
+    info('Your application %s was created successfully!', colorize(name, "bold"))
 
