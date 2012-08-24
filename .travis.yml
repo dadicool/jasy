@@ -6,6 +6,6 @@ python:
   - 3.2
 script:
   - ln -s `which python` python3; export PATH="$PATH:`pwd`"; bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-json-project --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
-  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-json-project --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
-  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-json-project --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
-  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-json-project --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
+  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-py-create --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
+  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-yaml-create --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
+  - bin/jasy create --name mytest --origin https://github.com/dadicool/jasy-skeleton.git --skeleton test-yaml-project --user.age 34 --user.name Alex --incr 6,7,8 --foo-bar hello --pi 3.17; pushd mytest; ../bin/jasy help; popd
