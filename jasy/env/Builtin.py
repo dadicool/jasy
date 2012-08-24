@@ -35,7 +35,6 @@ def help():
     jasy.info()
     
     print(colorize(colorize("Usage", "underline"), "bold"))
-    import jasy.env.Task
     print("  $ jasy [<options...>] <task1> [<args...>] [<task2> [<args...>]]")
 
     print()
@@ -57,7 +56,7 @@ def doctor():
 
 
 @task
-def create(name="myproject", origin=None, skeleton=None, configFormat="yaml", **argv):
+def create(name="myproject", origin=None, skeleton=None, **argv):
     """Creates a new project"""
 
     header("Creating project %s" % name)
@@ -170,11 +169,11 @@ def create(name="myproject", origin=None, skeleton=None, configFormat="yaml", **
 
     # Create configuration file from question configs and custom scripts
     info("Starting configuration...")
-    config = Config("jasyscript.%s" % configFormat)
-    config.inject(**argv)
-    config.read("jasycreate")
-    config.execute("jasycreate.py")
-    config.write()
+    config = Config()
+    config.injectValues(**argv)
+    config.readQuestions("jasycreate", optional=True)
+    config.executeScript("jasycreate.py", optional=True)
+    config.write("jasyscript.yaml")
 
     # Done
     info('Your application %s was created successfully!', colorize(name, "bold"))

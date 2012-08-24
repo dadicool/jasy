@@ -11,9 +11,10 @@ from jasy.i18n.LocaleData import *
 from jasy.core.Json import toJson
 from jasy.core.Project import Project, getProjectFromPath, getProjectDependencies
 from jasy.core.Permutation import Permutation
+from jasy.core.Config import findConfig
 
 from jasy.core.Error import JasyError
-from jasy.env.State import setPermutation, header, loadLibrary
+from jasy.env.State import setPermutation, header
 from jasy.core.Json import toJson
 from jasy.core.Logging import *
 
@@ -33,18 +34,15 @@ class Session():
         self.__projectByName = {}
         self.__fields = {}
         
-        if os.path.exists("jasyproject.json"):
+        if findConfig("jasyproject"):
+
             header("Initializing project")
 
             try:
-                # TODO: Figure out version of current project
-                version = None
-                project = getProjectFromPath(".", version=version)
-                
-                self.addProject(project)
-            except JasyError as jasyerr:
+                self.addProject(getProjectFromPath("."))
+            except JasyError as err:
                 outdent(True)
-                error(jasyerr)
+                error(err)
                 raise JasyError("Critical: Could not initialize session!")
     
     
@@ -119,11 +117,6 @@ class Session():
             # Append to session list
             self.__projects.append(project)
             
-            # Import library
-            library = project.getLibrary()
-            if library:
-                loadLibrary(project.getName(), library)
-
             # Import project defined fields which might be configured using "activateField()"
             fields = project.getFields()
             for name in fields:

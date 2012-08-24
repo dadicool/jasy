@@ -52,25 +52,37 @@ def prependPrefix(path):
 
 
 
-def loadLibrary(dest, path):
+# ===========================================================================
+#   Project Library Handling
+# ===========================================================================
+
+def loadLibrary(objectName, fileName, encoding="utf-8"):
+    """
+    Creates a new global object (inside global state) with the given name 
+    containing all @share'd functions and fields loaded from the given file.
+    """
+
+    # Create internal class object for storing shared methods
     class Shared(object): pass
-    shared = Shared
+    exportedModule = Shared()
     counter = 0
 
     # Method for being used as a decorator to share methods to the outside
     def share(func):
         nonlocal counter
-
-        setattr(shared, func.__name__, func)
+        setattr(exportedModule, func.__name__, func)
         counter += 1
 
-    # Execute given file. Sharing existing global environment
+    # Execute given file. Using clean new global environment
     # but add additional decorator for allowing to define shared methods
-    exec(open(path).read(), globals(), {"share":share})
+    code = open(fileName, "r", encoding=encoding).read()
+    exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share})
 
     # Export destination name as global    
-    info("Importing %s shared methods under %s...", counter, dest)
-    globals()[dest] = shared
+    debug("Importing %s shared methods under %s...", counter, objectName)
+    globals()[objectName] = exportedModule
+
+    return counter
 
 
 
